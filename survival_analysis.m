@@ -1,14 +1,24 @@
-function [METRICS fail_num] = survival_analysis(GRAPH,rep_id,rep_list,ADJ,CC_node,AC_node,HEMP,NUM,attack_mode)
+function [METRICS] = survival_analysis(GRAPH,rep_id,rep_list,ADJ,CC_node,AC_node,HEMP,NUM,attack_mode)
 
 %%%%%input%%%%%
-%GRAPH: 2-D matrix: each row specifies a node's geo-location in (x,y)
-%ADJ: network graph with same number of nodes as GRAPH, an adjacency matrix specifying connections between nodes
-%rep_id: repeater locations in (lon,lat)
+%GRAPH: 2-D matrix: each row specifies a node's geo-location in (lon,lat)
+%ADJ: weighted/unweighted network graph with same number of nodes as GRAPH, an adjacency matrix specifying connections between nodes
+%rep_id: repeater locations in (lon,lat), put to [] if no repeaters
 %rep_list: links associated with each repeater
-%CC_node: node index to indicate CC nodes
-%AC_node: node index to indicate AC nodes
-%HEMP: HEMP attack scenario
+%CC_node: node index to indicate Command and Control nodes, put to []
+%if not used
+%AC_node: node index to indicate Asset nodes, put to [] if not used
+%HEMP: a struct representing a HEMP attack scenario, there are two kinds of HEMP attacks:
+%1)simple two-disk HEMP: 
+%there should be 5 fields:
+%ground_zero: (lon,lat) location of the ground-zero
+%low_limit: low limit radius in nautical miles, in [0,low_limit] the prob. of node failure is near_prob
+%near_prob: prob. of failure within the low_limit radius [0,1].
+%high_limit: high limit radius in nautical miles, in [low_limit,high_limit] the prob. of node failure is within_prob
+%within_prob: prob. of failure within the high_limit radius: [0,1]. 
+%2)squared distance model HEMP:
 %NUM: number of monte carlo trials
+%attack_mode: simple to indicate simplied HEMP attack; otherwise, squared distance model HEMP
 %%%%%
 %%%%%output%%%%%
 %performance metrics in each random trials
@@ -34,7 +44,7 @@ while sim_count<NUM
 	%getting survival and failed nodes
 	[survive_nodes failed_nodes count_survived count_failed] = generate_failures(GRAPH,HEMP,attack_mode);
 	fprintf('%d nodes are failed\n',count_failed);
-	fail_num(sim_count) = count_failed;
+	%fail_num(sim_count) = count_failed;
 	%get failed repeaters index, and hence failed links
 	[survived_repeaters failed_repeaters count_survived count_failed] = generate_failures(rep_id,HEMP,attack_mode);
 	fprintf('%d repeaters are failed\n',count_failed);
