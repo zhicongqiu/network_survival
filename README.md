@@ -1,3 +1,5 @@
 # network_survival
-network survival analysis in Octave
-main file: survival_analysis.m
+network survival analysis under development in Octave.
+
+
+main file: see survival_analysis.m
