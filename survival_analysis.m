@@ -37,6 +37,7 @@ function [METRICS] = survival_analysis(GRAPH,rep_link,rep_list,ADJ,CC_node,AC_no
 %performance metrics in each random trials
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 METRICS = struct;
+N = size(GRAPH,1); %number of primary nodes
 index4original = cumsum(ones(1,N));
 %%%%%%%%%%%%%%%%%%%trivial cases:%%%%%%%%%%%%%%%%%%%%%%%%%%
 if size(GRAPH,1)<=1
@@ -62,8 +63,6 @@ end
 if length(AC_node)>1
   AC_node = sort(AC_node);
 end
-
-N = size(GRAPH,1); %number of primary nodes
 
 %index for original GRAPH
 %index4original = cumsum(ones(1,N));
