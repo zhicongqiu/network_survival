@@ -88,11 +88,14 @@ while sim_count<NUM
 	%plot topology post attack
 	%plot_topology(GRAPH_post,[],ADJ_post);
 	%title('Survived Network Post-attack');
-	[METRICS(sim_count)] = ...
+	[isConnected(sim_count) largest_comp(sim_count) num_comp(sim_count) avg_shortest(sim_count)] = ...
 	vulnerability_metrics(ADJ,index4post,ADJ_post,[],[],shortest_p);
 
 end
-for i=1:sim_count
-  METRICS(i).fail_node_count  = fail_node_count(i);
-  METRICS(i).fail_repeater_count  = fail_repeater_count(i);
-end
+
+METRICS.isConnected = isConnected;
+METRICS.largest_comp = largest_comp;
+METRICS.num_comp = num_comp;
+METRICS.avg_shortest = avg_shortest;
+METRICS.file_node_count = fail_node_count;
+METRICS.fail_repeater_count = fail_repeater_count;

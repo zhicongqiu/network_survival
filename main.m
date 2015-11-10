@@ -2,6 +2,8 @@
 
 %load mapping package
 %pkg load mapping;
+%load octave-networks-toolbox
+%addpath('octave-networks-toolbox');
 
 %{
 %shortest path of the complete graph
@@ -31,7 +33,7 @@ HEMP(5).ground_zero = core_list(find(id_list==13),:);
 HEMP(5).name = 'HEMP at Dallas';
 attack_mode = 'simple';
 NUM = 300;
-%}
+
 METRICS = struct;
 
 for i=1:length(HEMP)
@@ -39,9 +41,13 @@ for i=1:length(HEMP)
     HEMP(i).high_limit = high_limit;
     HEMP(i).within_prob = within_prob;
     HEMP(i).near_prob = near_prob;
-    METRICS(i) = ...
-    survival_analysis(core_list,rep_id2,rep_list2,adj_mtx_unweighted,[],[],shortest_p,HEMP(i),NUM,attack_mode);
+
 end
+%}
 
-
+for i=1:length(HEMP)
+  METRICS(i) = survival_analysis(core_list,rep_id2,rep_list2,...
+				 adj_mtx_unweighted,[],[],...
+				 shortest_p,HEMP(i),NUM,attack_mode);
+end
 
