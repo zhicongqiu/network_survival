@@ -1,4 +1,4 @@
-function [METRICS] = survival_analysis(GRAPH,rep_id,rep_list,ADJ,CC_node,AC_node,HEMP,NUM,attack_mode)
+function [METRICS] = survival_analysis(GRAPH,rep_id,rep_list,ADJ,CC_node,AC_node,shortest_p,HEMP,NUM,attack_mode)
 
 %%%%%input%%%%%
 %GRAPH: 2-D matrix: each row specifies a node's geo-location in (lon,lat)
@@ -24,8 +24,12 @@ function [METRICS] = survival_analysis(GRAPH,rep_id,rep_list,ADJ,CC_node,AC_node
 %performance metrics in each random trials
 METRICS = struct;
 %put AC and CC nodes in sorted order index
-CC_node = sort(CC_node);
-AC_node = sort(AC_node);
+if isempty(CC_node)==false
+  CC_node = sort(CC_node);
+end
+if isempty(AC_node)==false
+  AC_node = sort(AC_node);
+end
 
 N = size(GRAPH,1); %number of primary nodes
 
@@ -34,7 +38,7 @@ index4original = cumsum(ones(1,N));
 sim_count = 0;
 
 %plot the original graph
-plot_affected(GRAPH,ADJ,HEMP,attack_mode);
+%plot_affected(GRAPH,ADJ,HEMP,attack_mode);
 
 %%begin NUM simulations
 while sim_count<NUM
@@ -43,11 +47,12 @@ while sim_count<NUM
 	count_survived = 0;
 	%getting survival and failed nodes
 	[survive_nodes failed_nodes count_survived count_failed] = generate_failures(GRAPH,HEMP,attack_mode);
-	fprintf('%d nodes are failed\n',count_failed);
-	%fail_num(sim_count) = count_failed;
+	%fprintf('%d nodes are failed\n',count_failed);
+	fail_node_count(sim_count) = count_failed;
 	%get failed repeaters index, and hence failed links
 	[survived_repeaters failed_repeaters count_survived count_failed] = generate_failures(rep_id,HEMP,attack_mode);
-	fprintf('%d repeaters are failed\n',count_failed);
+	%fprintf('%d repeaters are failed\n',count_failed);
+	fail_repeater_count(sim_count) = count_failed;
 	
 	%post attack graph
 	%initialize GRAPH and ADJ post-attack
@@ -67,22 +72,27 @@ while sim_count<NUM
 	ADJ_post = ADJ_post(:,survive_nodes); %nodes survived
 	index4post = index4post(survive_nodes); %original index post-attack
 	%post attack surviving AC&CC nodes
-	[CC_node_post]=output_common_elements(survive_nodes,CC_node);
-	[AC_node_post]=output_common_elements(survive_nodes,AC_node);
-	%post attack failed AC&CC nodes
-	CC_node_failed = setdiff(CC_node,CC_node_post);
-	AC_node_failed = setdiff(AC_node,AC_node_post);
-	%adjust index post-attack for surviving AC&CC nodes
-	[CC_node_post_adjusted]=adjust_index(index4post,CC_node_post);
-	[AC_node_post_adjusted]=adjust_index(index4post,AC_node_post);
+	if isempty(CC_node)==false
+	  [CC_node_post]=output_common_elements(survive_nodes,CC_node);
+	  %post attack failed AC&CC nodes
+	  CC_node_failed = setdiff(CC_node,CC_node_post);
+	  %adjust index post-attack for surviving AC&CC nodes
+	  [CC_node_post_adjusted]=adjust_index(index4post,CC_node_post);
+	end
+	if isempty(AC_node)==false	
+	  [AC_node_post]=output_common_elements(survive_nodes,AC_node);
+	  %post attack failed AC&CC nodes
+	  AC_node_failed = setdiff(AC_node,AC_node_post);
+	  [AC_node_post_adjusted]=adjust_index(index4post,AC_node_post);
+	end
 	%plot topology post attack
 	%plot_topology(GRAPH_post,[],ADJ_post);
 	%title('Survived Network Post-attack');
 	[METRICS(sim_count)] = ...
-	vulnerability_metrics(ADJ,index4post,ADJ_post,AC_node_post_adjusted,CC_node_post_adjusted);
-		
+	vulnerability_metrics(ADJ,index4post,ADJ_post,[],[],shortest_p);
+
 end
-
-
-
-
+for i=1:sim_count
+  METRICS(i).fail_node_count  = fail_node_count(i);
+  METRICS(i).fail_repeater_count  = fail_repeater_count(i);
+end
