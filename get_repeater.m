@@ -18,12 +18,13 @@ for i=1:N-1
 			while count2<opt_num
 				count = count+1;
 				count2 = count2+1;
+				pt = zeros(1,2);
 				if count2==1
 					%pt = reckon(core_list(i,2),core_list(i,1),temp_arclen,az_mtx(i,j));
-					pt = reckon(core_list(i,2),core_list(i,1),opt_all,az_mtx(i,j));
+					[pt(1),pt(2)] = reckon(core_list(i,2),core_list(i,1),opt_all,az_mtx(i,j));
 				else
 					%pt = reckon(pt(1),pt(2),temp_arclen,temp_az);
-					pt = reckon(pt(1),pt(2),opt_all,temp_az);
+					[pt(1),pt(2)] = reckon(pt(1),pt(2),opt_all,temp_az);
 				end
 				rep_list(count,1) = pt(2);
 				rep_list(count,2) = pt(1);

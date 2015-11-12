@@ -1,4 +1,4 @@
-function [adj_mtx az_mtx] = get_dist_az_mtx(id_list,adj_list,dist_mtx,no_list)
+function [adj_mtx az_mtx] = get_dist_az_matrix(core_list)
 
 N = size(core_list,1);
 az_mtx = zeros(N,N);

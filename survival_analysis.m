@@ -39,6 +39,16 @@ sim_count = 0;
 
 %plot the original graph
 %plot_affected(GRAPH,ADJ,HEMP,attack_mode);
+%global GRAPH rep_id rep_list ADJ CC_node AC_node shortest_p HEMP;
+%{
+Idx = 1:NUM;
+[isConnected largest_comp num_comp avg_shortest]  = ...
+ndpar_arrayfun(nproc,@parallel_survival_analysis,attack_mode,index4original,Idx,...%
+				    'Vectorized', false, 'ChunksPerProc',(NUM/nproc),...
+				    'VerboseLevel', 1,'IdxDimensions', ...
+				    [0 0 2],'CatDimensions', [2 2 2 2]);
+
+%}
 
 %%begin NUM simulations
 while sim_count<NUM
@@ -88,6 +98,7 @@ while sim_count<NUM
 	%plot topology post attack
 	%plot_topology(GRAPH_post,[],ADJ_post);
 	%title('Survived Network Post-attack');
+	
 	[isConnected(sim_count) largest_comp(sim_count) num_comp(sim_count) avg_shortest(sim_count)] = ...
 	vulnerability_metrics(ADJ,index4post,ADJ_post,[],[],shortest_p);
 
