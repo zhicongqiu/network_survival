@@ -1,4 +1,4 @@
-function [METRICS] = survival_analysis(GRAPH,rep_link,rep_list,ADJ,CC_node,AC_node,shortest_p,HEMP,NUM,attack_mode)
+function [METRICS] = survival_analysis(GRAPH,rep_link,rep_list,ADJ,CC_node,AC_node,shortest_p,mincut_mtx,HEMP,NUM,attack_mode)
 
 %%%%%input%%%%%
 %GRAPH: 2-D matrix: each row specifies a node's geo-location in
@@ -142,14 +142,16 @@ while sim_count<NUM
 	%plot_topology(GRAPH_post,[],ADJ_post);
 	%title('Survived Network Post-attack');
 	
-	[isConnected(sim_count) largest_comp(sim_count) num_comp(sim_count) avg_shortest(sim_count)] = ...
-	vulnerability_metrics(ADJ,index4post,ADJ_post,[],[],shortest_p);
+	[isConnected(sim_count) largest_comp(sim_count)
+	 num_comp(sim_count) avg_shortest(sim_count) avg_mincut(sim_count)] = ...
+	vulnerability_metrics(ADJ,index4post,ADJ_post,[],[],shortest_p,mincut_mtx);
 end
 %%%%%%%%%%%%%%%%%%%%%%return performance measure%%%%%%%%%%%%%%%%%%%%
 METRICS.isConnected = isConnected;
 METRICS.largest_comp = largest_comp;
 METRICS.num_comp = num_comp;
 METRICS.avg_shortest = avg_shortest;
+METRICS.avg_mincut = avg_mincut;
 METRICS.file_node_count = fail_node_count;
 METRICS.fail_repeater_count = fail_repeater_count;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

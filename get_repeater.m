@@ -3,7 +3,9 @@ function [rep_list rep_id] = get_repeater(core_list, adj_mtx, az_mtx)
 %optimize allocation of repeaters (partition the link into equal-length segments)
 %output: a lister of repeater in lon,lat and their 'belonging'
 
-l = 434.488; %=500 miles, limit that we need to add a repeater if longer
+%
+%l = 434.488; %=500 miles, limit that we need to add a repeater if longer
+l = 43.1965; %= 80 kms or 49.71 miles
 %temp_arclen = nm2deg(l); %used in retriving lon,lat of a repeater along the azimuth
 N = size(adj_mtx,1);
 count = 0;
