@@ -12,9 +12,16 @@ function [survive_nodes failed_nodes count_survived count_failed] =...
     lon_lat_dist(HEMP.ground_zero(1),HEMP.ground_zero(2),...
 		 node_list(i,1),node_list(i,2));
     %squared distance HEMP model
-    if strcmp(attack_mode,'squared_distance')
+    if strcmp(attack_mode,'gaussian')
+      %p-value associated with x and y
+      temp_prob = normcdf(temp_dist,0,HEMP.std);
+      if temp_prob<0.5
+	 temp_prob = 2*temp_prob;
+      else
+	temp_prob = 2*(1-temp_prob);
+      end
       %within the affected area and failed
-      if temp_dist<=HEMP.range && HEMP.alpha/(temp_dist^2)>=rand 
+      if temp_prob>=rand 
 	count_failed = count_failed+1;
 	failed_nodes(count_failed) = i;	
       else
@@ -35,5 +42,4 @@ function [survive_nodes failed_nodes count_survived count_failed] =...
 	survive_nodes(count_survived) = i;			
       end			
     end				
-  end	
-  
+  end

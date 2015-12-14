@@ -29,10 +29,15 @@ function [METRICS] = survival_analysis(GRAPH,rep_link,rep_list,ADJ,...
 %high_limit: high limit radius in nautical miles, in [low_limit,high_limit] the prob. of node failure is within_prob
 %within_prob: prob. of failure within the high_limit radius: [0,1]. 
 %2)squared distance model HEMP:
+%two fields:
+%ground_zero: (lon,lat) location of the ground-zero
+%std: std of the Gaussian failure model
 %
 %NUM: number of monte carlo trials
 %
-%attack_mode: simple to indicate simplied HEMP attack; otherwise, squared distance model HEMP
+%attack_mode: 
+%'simple': indicate simple two-disk HEMP attack
+%'gaussian': squared distance model HEMP
 %
 %%%%%%%%%%%%%%%%
 %%%%%output%%%%%
