@@ -49,6 +49,7 @@ if isempty(HEMP)
   METRICS.largest_comp = 1*ones(1,NUM);
   METRICS.num_comp = 1*ones(1,NUM);
   METRICS.avg_shortest = 0*ones(1,NUM);
+  METRICS.avg_mincut = 0*ones(1,NUM);
   METRICS.file_node_count = 0*ones(1,NUM);
   METRICS.fail_repeater_count = 0*ones(1,NUM);  
   fprintf('no HEMP attack, return metrics with the whole network intact.\n');

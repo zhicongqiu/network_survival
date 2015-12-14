@@ -1,4 +1,4 @@
-function [rep_list rep_id] = get_repeater(core_list, adj_mtx, az_mtx)
+function [rep_list rep_link] = get_repeater(core_list, adj_mtx, az_mtx)
 %put repeaters along the link with distance larger than l nautical miles
 %optimize allocation of repeaters (partition the link into equal-length segments)
 %output: a lister of repeater in lon,lat and their 'belonging'
@@ -30,8 +30,8 @@ for i=1:N-1
 				end
 				rep_list(count,1) = pt(2);
 				rep_list(count,2) = pt(1);
-				rep_id(count,1) = i;
-				rep_id(count,2) = j;
+				rep_link(count,1) = i;
+				rep_link(count,2) = j;
 				[dist temp_az] = lon_lat_dist(pt(2),pt(1),core_list(j,1),core_list(j,2));
 				if dist<l
 					break;
