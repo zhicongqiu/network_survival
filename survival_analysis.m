@@ -1,4 +1,6 @@
-function [METRICS] = survival_analysis(GRAPH,rep_link,rep_list,ADJ,CC_node,AC_node,shortest_p,mincut_mtx,HEMP,NUM,attack_mode)
+function [METRICS] = survival_analysis(GRAPH,rep_link,rep_list,ADJ,...
+				       CC_node,AC_node,shortest_p,mincut_mtx,...
+				       HEMP,NUM,attack_mode)
 
 %%%%%input%%%%%
 %GRAPH: 2-D matrix: each row specifies a node's geo-location in
@@ -88,11 +90,13 @@ while sim_count<NUM
 	count_failed = 0;
 	count_survived = 0;
 	%getting survival and failed nodes
-	[survive_nodes failed_nodes count_survived count_failed] = generate_failures(GRAPH,HEMP,attack_mode);
+	[survive_nodes failed_nodes count_survived count_failed] = ...
+	generate_failures(GRAPH,HEMP,attack_mode);
 	%fprintf('%d nodes are failed\n',count_failed);
 	fail_node_count(sim_count) = count_failed;
 	%get failed repeaters index, and hence failed links
-	[survived_repeaters failed_repeaters count_survived count_failed] = generate_failures(rep_list,HEMP,attack_mode);
+	[survived_repeaters failed_repeaters count_survived count_failed] = ...
+	generate_failures(rep_list,HEMP,attack_mode);
 	%fprintf('%d repeaters are failed\n',count_failed);
 	fail_repeater_count(sim_count) = count_failed;
 	
@@ -131,21 +135,24 @@ while sim_count<NUM
 	  %plot topology post attack
 	  %plot_topology(GRAPH_post,[],ADJ_post);
 	  %title('Survived Network Post-attack');
-	  [isConnected(sim_count) largest_comp(sim_count) num_comp(sim_count) avg_shortest(sim_count)] = ...
-	  vulnerability_metrics(ADJ,index4post,ADJ_post,[],[],shortest_p);
+	  [isConnected(sim_count) largest_comp(sim_count)...
+		      num_comp(sim_count) avg_shortest(sim_count)  avg_mincut(sim_count)] = ...
+	  vulnerability_metrics(ADJ,index4post,ADJ_post,[],[],shortest_p,mincut_mtx);
 	else %black-out case
-	   isConnected(sim_count)=-1;
-	   largest_comp(sim_count)=0;
-	   num_comp(sim_count)=0;
-	   avg_shortest(sim_count)=-1;
+	  fprintf('all blacked out...\n');
+	  isConnected(sim_count)=-1;
+	  largest_comp(sim_count)=0;
+	  num_comp(sim_count)=0;
+	  avg_shortest(sim_count)=-1;
+	  avg_mincut(sim_count) = -1;
 	end
 	%plot topology post attack
 	%plot_topology(GRAPH_post,[],ADJ_post);
 	%title('Survived Network Post-attack');
 	
-	[isConnected(sim_count) largest_comp(sim_count)
-	 num_comp(sim_count) avg_shortest(sim_count) avg_mincut(sim_count)] = ...
-	vulnerability_metrics(ADJ,index4post,ADJ_post,[],[],shortest_p,mincut_mtx);
+	%[isConnected(sim_count) largest_comp(sim_count) num_comp(sim_count) ...
+	%	    avg_shortest(sim_count) avg_mincut(sim_count)] = ...
+	%vulnerability_metrics(ADJ,index4post,ADJ_post,[],[],shortest_p,mincut_mtx);
 end
 %%%%%%%%%%%%%%%%%%%%%%return performance measure%%%%%%%%%%%%%%%%%%%%
 METRICS.isConnected = isConnected;
