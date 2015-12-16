@@ -40,6 +40,17 @@ function [survive_nodes failed_nodes count_survived count_failed] =...
       else
 	count_survived = count_survived+1;
 	survive_nodes(count_survived) = i;			
-      end			
+      end
+    elseif strcmp(attack_mode,'cookie_cutter')||...
+	   strcmp(attack_mode,'worst_case')
+      if temp_dist<=HEMP.r
+	count_failed = count_failed+1;
+	failed_nodes(count_failed) = i;	
+      else
+	count_survived = count_survived+1;
+	survive_nodes(count_survived) = i;
+      end
+    else
+	error('HEMP attack not specified...\n');
     end				
   end
