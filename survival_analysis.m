@@ -152,7 +152,8 @@ ndpar_arrayfun(nproc,@parallel_survival_analysis,attack_mode,index4original,Idx,
       [isConnected(sim_count), largest_comp(sim_count), ...
        num_comp(sim_count), avg_shortest(sim_count),...
        avg_mincut(sim_count), num_conn_pairwise(sim_count,:)] = ...
-      vulnerability_metrics(ADJ,index4post,ADJ_post,[],[],shortest_p,mincut_mtx,options);
+      vulnerability_metrics(ADJ,index4post,ADJ_post,[],[],
+			    shortest_p,mincut_mtx,options);
       num_conn_pairwise(1) = num_conn_pairwise(1)/size(GRAPH,1);
     else %black-out case
       fprintf('all blacked out...\n');
