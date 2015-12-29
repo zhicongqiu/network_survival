@@ -25,16 +25,29 @@
 function [] = plot_results (METRICS)
   subplot(2,2,1);
   hist(METRICS.largest_comp);
-  title('histogram for largest connected component');
+  temp_str = strcat('size of LCC: ',...
+		    num2str(mean(METRICS.largest_comp)),...
+		    ' +- ',num2str(sqrt(var(METRICS.largest_comp))));
+
+  title(temp_str);
   subplot(2,2,2);
   hist(METRICS.num_conn_pairwise(:,2));
-  title('ratio of pairwise connections on the surviving nodes');
+  temp_str = strcat('ratio of pair conn. survived: ',...
+		    num2str(mean(METRICS.num_conn_pairwise(:,2))),...
+		   ' +- ',num2str(sqrt(var(METRICS.num_conn_pairwise(:,2)))));
+  title(temp_str);
   subplot(2,2,3);
   hist(METRICS.avg_shortest);
-  title('shortest path difference before/after HEMP');
+  temp_str = strcat('shortest path diff. bef./aft. HEMP: ',...
+		    num2str(mean(METRICS.avg_shortest)),...
+		   ' +- ', num2str(sqrt(var(METRICS.avg_shortest))));
+  title(temp_str);
   subplot(2,2,4);
   hist(METRICS.avg_mincut);
-  title('min-cut difference before/after HEMP');
+  temp_str = strcat('min-cut diff. bef./aft. HEMP: ',...
+		    num2str(mean(METRICS.avg_mincut)),...
+		    ' +- ', num2str(sqrt(var(METRICS.avg_mincut))));
+  title(temp_str);
 
 
 
