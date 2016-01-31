@@ -6,7 +6,7 @@ function [hi_affected_nodes low_affected_nodes] = get_affected(node_list,HEMP,at
 	low_affected_nodes = [];
 	for i=1:size(node_list,1)
 		[temp_dist temp_az] = lon_lat_dist(HEMP.ground_zero(1),HEMP.ground_zero(2),node_list(i,1),node_list(i,2));
-		if attack_mode~='simple'
+		if strcmp(attack_mode,'simple')==0
 			if temp_dist<=HEMP.range
 				count_affected = count_affected+1;
 				hi_affected_nodes(count_affected) = i;
@@ -14,6 +14,7 @@ function [hi_affected_nodes low_affected_nodes] = get_affected(node_list,HEMP,at
 		
 		%a sampler model
 		else
+		    %fprintf('read in simple model...');
 			if temp_dist<=HEMP.high_limit&&temp_dist>=HEMP.low_limit
 				count_affected_low = count_affected_low+1;
 				low_affected_nodes(count_affected_low) = i;		
