@@ -1,19 +1,40 @@
-%load Uunet.mat
+%load('Uunet.mat');
 
 %load mapping package
 %pkg load mapping;
 %load octave-networks-toolbox
 %addpath('octave-networks-toolbox');
 
-%{
+%[dist_mtx az_mtx] = get_dist_az_matrix(core_list);
+%[rep_list rep_id] = get_repeater(core_list, adj_mtx, az_mtx);
+
 %shortest path of the complete graph
-shortest_p = ones(size(adj_mtx,1),size(adj_mtx,1));
+%{
+tic();
+shortest_p = zeros(size(adj_mtx,1),size(adj_mtx,1));
 for i=1:size(adj_mtx_unweighted,1)-1
     for j=i+1:size(adj_mtx_unweighted,1)
       [shortest_p(i,j) P]= dijkstra(adj_mtx_unweighted,i,j);
       shortest_p(j,i) = shortest_p(i,j);
     end
 end
+toc();
+
+tic();
+shortest_p = zeros(size(adj_mtx,1),size(adj_mtx,1));
+for i=1:size(adj_mtx_unweighted,1)
+      shortest_p(i,:)= simpleDijkstra(adj_mtx_unweighted,i);
+end
+toc();
+%}
+
+%Gaussian HEMP model
+FAIL_MODEL_GAUSS = struct;
+FAIL_MODEL_GAUSS.std = 608.28;
+%cookie_cutter model
+FAIL_MODEL_CC = struct;
+FAIL_MODEL_CC.r = 347.59;
+%{
 %HEMP attack scenario
 low_limit = 347.59;
 high_limit = 608.28;
@@ -44,10 +65,10 @@ for i=1:length(HEMP)
 
 end
 %}
-
+%{
 for i=1:length(HEMP)
   METRICS(i) = survival_analysis(core_list,rep_id2,rep_list2,...
 				 adj_mtx_unweighted,[],[],...
 				 shortest_p,HEMP(i),NUM,attack_mode);
 end
-
+%}
