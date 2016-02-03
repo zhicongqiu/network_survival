@@ -1,7 +1,7 @@
 function [PAIRS_METRICS BASELINE_METRICS] = ...
 	 backup_protection_sim(GRAPH,rep_link,rep_list,ADJ,...
 			       pairs,shortest_ps,backup_ps,...
-			       BASELINE,HEMP,NUM)
+			       BASELINE,HEMP,NUM,use_repeater)
 
 %function [METRICS] = backup_protection_sim(GRAPH,rep_link,rep_list,ADJ,...
 %					   pairs,shortest_ps,backup_ps,...
@@ -18,6 +18,7 @@ function [PAIRS_METRICS BASELINE_METRICS] = ...
 %nd shortest ps, etc.)
 %HEMP - HEMP model (gaussian HEMP attack)
 %NUM - number of MC sampling to the HEMP attack
+%use_repeater - 0 if not using
 %OUTPUT:
 %not decided?
   num_pairs = size(pairs,1);
@@ -26,31 +27,30 @@ function [PAIRS_METRICS BASELINE_METRICS] = ...
     BASELINE_METRICS(i).PAIRS_METRICS = zeros(num_pairs,6);
   end
   for i=1:NUM
+
+    %post attack graph
+    %initialize GRAPH and ADJ post-attack
+    ADJ_post = ADJ;
     survived_nodes_indicator = zeros(1,size(GRAPH,1));
     %getting survival and failed nodes
     [survive_nodes failed_nodes count_survived count_failed] = ...
     generate_failures(GRAPH,HEMP,'gaussian');
     fail_node_count(i) = count_failed;
     
-%{
-    %get failed repeaters index, and hence failed links
-    [survived_repeaters failed_repeaters count_survived count_failed] = ...
-    generate_failures(rep_list,HEMP,'gaussian');
-    fail_repeater_count(i) = count_failed;
-%}
-    %post attack graph
-    %initialize GRAPH and ADJ post-attack
-    ADJ_post = ADJ;
-    ADJ_failed = ADJ;
-
-%{
-    if size(failed_repeaters,1)>0
-      for j=1:size(failed_repeaters,1) %link failures
-	ADJ_post(rep_link(failed_repeaters(j),1),rep_link(failed_repeaters(j),2)) = 0;
-	ADJ_post(rep_link(failed_repeaters(j),2),rep_link(failed_repeaters(j),1)) = 0;
+    if use_repeater==1
+      %get failed repeaters index, and hence failed links
+      [survived_repeaters failed_repeaters count_survived count_failed] = ...
+      generate_failures(rep_list,HEMP,'gaussian');
+      fail_repeater_count(i) = count_failed;
+      if size(failed_repeaters,1)>0
+	for j=1:size(failed_repeaters,1) %link failures
+	  ADJ_post(rep_link(failed_repeaters(j),1),...
+		   rep_link(failed_repeaters(j),2)) = 0;
+	  ADJ_post(rep_link(failed_repeaters(j),2),...
+		   rep_link(failed_repeaters(j),1)) = 0;
+	end
       end
     end
-%}
     %node failure
     ADJ_post(failed_nodes,:) = 0;
     ADJ_post(:,failed_nodes) = 0;
