@@ -21,9 +21,9 @@ function [PAIRS_METRICS BASELINE_METRICS] = ...
 %OUTPUT:
 %not decided?
   num_pairs = size(pairs,1);
-  PAIRS_METRICS = zeros(num_pairs,5);
+  PAIRS_METRICS = zeros(num_pairs,6);
   for i=1:length(BASELINE)
-    BASELINE_METRICS(i).PAIRS_METRICS = zeros(num_pairs,5);
+    BASELINE_METRICS(i).PAIRS_METRICS = zeros(num_pairs,6);
   end
   for i=1:NUM
     survived_nodes_indicator = zeros(1,size(GRAPH,1));
@@ -67,22 +67,32 @@ function [PAIRS_METRICS BASELINE_METRICS] = ...
           PAIRS_METRICS(j,2) = PAIRS_METRICS(j,2)+1;
 	else
 	  PAIRS_METRICS(j,3) = PAIRS_METRICS(j,3)+1;
-	  temp = calculate_backup_survive(ADJ_post,backup_ps(j).p);
-	  if temp==false
-	    PAIRS_METRICS(j,5) = PAIRS_METRICS(j,5)+1;
-	  else
+
+	  %check if the pairs are connected
+	  [temp_dist,~] = dijkstra(ADJ_post,pairs(j,1),pairs(j,2));
+
+	  if ~isinf(temp_dist)
+	    %the pairs are connected post attack
 	    PAIRS_METRICS(j,4) = PAIRS_METRICS(j,4)+1;
-	  end
-	  for k=1:length(BASELINE)
+
+	    %out of connected pairs, are backup paths survived?
+	    temp = calculate_backup_survive(ADJ_post,backup_ps(j).p);
+	    if temp==false %backup failed
+	      PAIRS_METRICS(j,6) = PAIRS_METRICS(j,6)+1;
+	    else %backup survived
+	      PAIRS_METRICS(j,5) = PAIRS_METRICS(j,5)+1;
+	    end
+	    for k=1:length(BASELINE)
 	      temp = calculate_backup_survive(ADJ_post,BASELINE(k).backup_ps(j).p);
 	      if temp==false
+		BASELINE_METRICS(k).PAIRS_METRICS(j,6) = ...
+		BASELINE_METRICS(k).PAIRS_METRICS(j,6)+1;
+	      else
 		BASELINE_METRICS(k).PAIRS_METRICS(j,5) = ...
 		BASELINE_METRICS(k).PAIRS_METRICS(j,5)+1;
-	      else
-		BASELINE_METRICS(k).PAIRS_METRICS(j,4) = ...
-		BASELINE_METRICS(k).PAIRS_METRICS(j,4)+1;
 	      end
-	  end	    
+	    end	 
+	  end   
 	end
       end
     end
